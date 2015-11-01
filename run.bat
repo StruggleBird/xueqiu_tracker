@@ -1,0 +1,1 @@
+java -jar xueqiu_tracker-0.0.1-SNAPSHOT-jar-with-dependencies.jar
