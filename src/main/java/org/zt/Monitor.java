@@ -98,7 +98,7 @@ public class Monitor {
      * @create 2015年11月1日
      */
     private static Config loadConfig() {
-        File file = new File("stocktip.cfg");
+        File file = new File("config.json");
         String fileContent;
         try {
             fileContent = FileUtils.readFileToString(file);
