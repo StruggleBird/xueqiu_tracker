@@ -26,6 +26,8 @@ public class Config implements Serializable{
     
     private Boolean testMode;
 
+    private String cookie;
+
     /**
      * @return the interval
      */
@@ -94,6 +96,14 @@ public class Config implements Serializable{
      */
     public void setTestMode(Boolean testMode) {
         this.testMode = testMode;
+    }
+
+    public String getCookie() {
+        return cookie;
+    }
+
+    public void setCookie(String cookie) {
+        this.cookie = cookie;
     }
     
     

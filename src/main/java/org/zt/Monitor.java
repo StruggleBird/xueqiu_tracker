@@ -37,8 +37,10 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.message.BasicHeader;
 
 import com.alibaba.fastjson.JSON;
@@ -54,8 +56,7 @@ public class Monitor {
     private static Component comp = null;
     private static TrayIcon trayIcon;
 
-    public static void main(String[] args) throws IllegalStateException, IOException,
-            InterruptedException {
+    public static void main(String[] args) throws IllegalStateException, IOException, InterruptedException {
 
         initTray();
         config = loadConfig();
@@ -75,14 +76,14 @@ public class Monitor {
         if (SystemTray.isSupported()) {
             SystemTray tray = SystemTray.getSystemTray();
             Image image = Toolkit.getDefaultToolkit().getImage(Monitor.class.getResource("/META-INF/icon-32.png"));
-            
+
             PopupMenu popupMenu = new PopupMenu();
             MenuItem exitItem = new MenuItem("Exit");
 
             exitItem.addActionListener(new ExitItemActionListener());
 
             popupMenu.add(exitItem);
-            trayIcon = new TrayIcon(    image, "雪球", popupMenu);
+            trayIcon = new TrayIcon(image, "雪球", popupMenu);
             trayIcon.addMouseListener(new TrayIconMouseListener());
             try {
                 tray.add(trayIcon);
@@ -119,14 +120,13 @@ public class Monitor {
             return;
         };
         System.out.println("check url:" + url);
-        String content = getContext(url);
+        String content = getContent(url);
         Map<String, Object> data = getData(content);
         if (data != null) {
             for (String key : data.keySet()) {
                 System.out.println(key + ":" + data.get(key));
             }
-            System.out
-                    .println("--------------------------------------------------------------------------");
+            System.out.println("--------------------------------------------------------------------------");
 
             // 如果已经有缓存，对比和缓存中的是否一致，不一致发出提醒
 
@@ -197,27 +197,28 @@ public class Monitor {
      * @throws ClientProtocolException
      * @create 2015年11月1日
      */
-    private static String getContext(String url) {
+    private static String getContent(String url) {
         // 创建HttpClient实例
         CloseableHttpClient httpclient = HttpClients.createDefault();
 
         try {
             // 创建Get方法实例
             HttpGet httpgets = new HttpGet(url);
-            Header[] headers = new BasicHeader[2];
+            Header[] headers = new BasicHeader[3];
             headers[0] = new BasicHeader("Content-Type", "application/x-www-form-urlencoded");
-            headers[1] =
-                    new BasicHeader(
-                            "User-Agent",
+            headers[1] = new BasicHeader("User-Agent",
                             "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.152 Safari/537.36 LBBROWSER");
+
+            headers[2] = new BasicHeader("Cookie", config.getCookie());
             httpgets.setHeaders(headers);
             HttpResponse response = httpclient.execute(httpgets);
             HttpEntity entity = response.getEntity();
+
             if (entity != null) {
                 InputStream instreams = entity.getContent();
                 String content = convertStreamToString(instreams);
                 httpgets.abort();
-
+                // setCookieStore(response);
                 return content;
             }
         } catch (Exception e) {
@@ -233,6 +234,25 @@ public class Monitor {
 
 
         return null;
+    }
+
+    public static void setCookieStore(HttpResponse httpResponse) {
+        System.out.println("----setCookieStore");
+        BasicCookieStore cookieStore = new BasicCookieStore();
+        // JSESSIONID
+        String setCookie = httpResponse.getFirstHeader("Set-Cookie").getValue();
+        String JSESSIONID = setCookie.substring("JSESSIONID=".length(), setCookie.indexOf(";"));
+        System.out.println("JSESSIONID:" + JSESSIONID);
+        // 新建一个Cookie
+        BasicClientCookie cookie = new BasicClientCookie("JSESSIONID", JSESSIONID);
+        cookie.setVersion(0);
+        cookie.setDomain("127.0.0.1");
+        cookie.setPath("/CwlProClient");
+        // cookie.setAttribute(ClientCookie.VERSION_ATTR, "0");
+        // cookie.setAttribute(ClientCookie.DOMAIN_ATTR, "127.0.0.1");
+        // cookie.setAttribute(ClientCookie.PORT_ATTR, "8080");
+        // cookie.setAttribute(ClientCookie.PATH_ATTR, "/CwlProWeb");
+        cookieStore.addCookie(cookie);
     }
 
     public static String convertStreamToString(InputStream is) {
