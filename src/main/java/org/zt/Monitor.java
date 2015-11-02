@@ -132,13 +132,33 @@ public class Monitor {
 
             if (cache.containsKey(url)) {
                 Map<String, Object> oriData = (Map<String, Object>) cache.get(url);
-                if (!oriData.equals(data)) {
+                if (!dataEquals(oriData, data)) {
                     notify(url);
                 }
             }
 
             cache.put(url, data);
         }
+    }
+
+    private static boolean dataEquals(Map<String, Object> oriData, Map<String, Object> data) {
+        if (oriData.size() != data.size()) {
+            return false;
+        }
+        for (String key : oriData.keySet()) {
+            Map<String, Object> map = (Map<String, Object>) oriData.get(key);
+            float weight = Float.parseFloat(map.get("weight").toString());
+            if (!data.containsKey(key)) {
+                return false;
+            }
+
+            Map<String, Object> mapNew = (Map<String, Object>) data.get(key);
+            float weightNew = Float.parseFloat(map.get("weight").toString());
+            if (Math.abs(weight - weightNew) > config.getFloatVal()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
