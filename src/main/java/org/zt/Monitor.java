@@ -119,7 +119,7 @@ public class Monitor {
             System.out.println("休市中....");
             return;
         };
-        System.out.println("check url:" + url);
+        System.out.println("check url:" + url + " -" + new Date());
         String content = getContent(url);
         Map<String, Object> data = getData(content);
         if (data != null) {
