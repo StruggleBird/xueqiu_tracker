@@ -17,11 +17,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Date;
@@ -32,15 +30,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.message.BasicHeader;
 
 import com.alibaba.fastjson.JSON;
@@ -204,6 +201,7 @@ public class Monitor {
         Matcher matcher = treePattern.matcher(content);
         if (matcher.find()) {
             String stockTree = matcher.group(1);
+            // System.out.println(stockTree);
             Map<String, Object> map = JSON.parseObject(stockTree, Map.class);
             return map;
         }
@@ -225,7 +223,7 @@ public class Monitor {
             // 创建Get方法实例
             HttpGet httpgets = new HttpGet(url);
             Header[] headers = new BasicHeader[3];
-            headers[0] = new BasicHeader("Content-Type", "application/x-www-form-urlencoded");
+            headers[0] = new BasicHeader("Content-Type", "text/html; charset=utf-8");
             headers[1] = new BasicHeader("User-Agent",
                             "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.152 Safari/537.36 LBBROWSER");
 
@@ -236,7 +234,8 @@ public class Monitor {
 
             if (entity != null) {
                 InputStream instreams = entity.getContent();
-                String content = convertStreamToString(instreams);
+
+                String content = IOUtils.toString(instreams, "UTF-8");
                 httpgets.abort();
                 // setCookieStore(response);
                 return content;
@@ -254,46 +253,6 @@ public class Monitor {
 
 
         return null;
-    }
-
-    public static void setCookieStore(HttpResponse httpResponse) {
-        System.out.println("----setCookieStore");
-        BasicCookieStore cookieStore = new BasicCookieStore();
-        // JSESSIONID
-        String setCookie = httpResponse.getFirstHeader("Set-Cookie").getValue();
-        String JSESSIONID = setCookie.substring("JSESSIONID=".length(), setCookie.indexOf(";"));
-        System.out.println("JSESSIONID:" + JSESSIONID);
-        // 新建一个Cookie
-        BasicClientCookie cookie = new BasicClientCookie("JSESSIONID", JSESSIONID);
-        cookie.setVersion(0);
-        cookie.setDomain("127.0.0.1");
-        cookie.setPath("/CwlProClient");
-        // cookie.setAttribute(ClientCookie.VERSION_ATTR, "0");
-        // cookie.setAttribute(ClientCookie.DOMAIN_ATTR, "127.0.0.1");
-        // cookie.setAttribute(ClientCookie.PORT_ATTR, "8080");
-        // cookie.setAttribute(ClientCookie.PATH_ATTR, "/CwlProWeb");
-        cookieStore.addCookie(cookie);
-    }
-
-    public static String convertStreamToString(InputStream is) {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-        StringBuilder sb = new StringBuilder();
-
-        String line = null;
-        try {
-            while ((line = reader.readLine()) != null) {
-                sb.append(line + "\n");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                is.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return sb.toString();
     }
 
 
