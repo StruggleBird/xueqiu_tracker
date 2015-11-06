@@ -150,7 +150,7 @@ public class Monitor {
             }
 
             Map<String, Object> mapNew = (Map<String, Object>) data.get(key);
-            float weightNew = Float.parseFloat(map.get("weight").toString());
+            float weightNew = Float.parseFloat(mapNew.get("weight").toString());
             if (Math.abs(weight - weightNew) > config.getFloatVal()) {
                 return false;
             }
