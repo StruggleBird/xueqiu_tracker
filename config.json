@@ -2,10 +2,12 @@
     "interval": 5,
 	"preview":0,
 	"testMode":0,
-	"floatVal":2.0,
+    "floatVal":2.0,
+    "mailToken":"aqgqgdqwumdibjcf",
+    "mailAddr":"mjhx_zt@qq.com",
     "urls": [
-         "http://xueqiu.com/P/ZH472062"
+         "https://xueqiu.com/P/ZH2099343"
          
     ],
-    "cookie":"s=bhh12kkclk; bid=41322d5f53a7b7a96e45859d71d59559_igha92co; last_account=mjhx_zt%40qq.com; __utmt=1; xq_a_token=95c0462da219826c758dd053a45f39a3c7bc1fa5; xqat=95c0462da219826c758dd053a45f39a3c7bc1fa5; xq_r_token=557f8a75439c3fd8a71ac09faf5955e236c8b4ef; xq_is_login=1; u=9577327673; xq_token_expire=Fri%20Nov%2027%202015%2010%3A12%3A58%20GMT%2B0800%20(CST); Hm_lvt_1db88642e346389874251b5a1eded6e3=1444799597,1445399242,1445823916,1446086160; Hm_lpvt_1db88642e346389874251b5a1eded6e3=1446430379; __utma=1.1074508548.1446428567.1446428567.1446428567.1; __utmb=1.11.10.1446428567; __utmc=1; __utmz=1.1446428567.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none)"
+    "cookie":"_ga=GA1.2.752816868.1558766807; device_id=78f58a46931405dae848938b8685d4eb; __utmc=1; __utmz=1.1558766835.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none); bid=41322d5f53a7b7a96e45859d71d59559_jw35nlu7; snbim_minify=true; Hm_lvt_1db88642e346389874251b5a1eded6e3=1582713139; cookiesu=281583146338333; xq_is_login=1; u=9577327673; __utma=1.752816868.1558766807.1583146324.1583196579.160; __utmb=1.3.10.1583196579; Hm_lpvt_1db88642e346389874251b5a1eded6e3=1583196863"
 }

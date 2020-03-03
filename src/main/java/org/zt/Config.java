@@ -3,7 +3,11 @@
  */
 package org.zt;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
+import org.apache.commons.io.FileUtils;
+import com.alibaba.fastjson.JSON;
 
 /**
  * @author Ternence
@@ -27,6 +31,38 @@ public class Config implements Serializable{
     private Boolean testMode;
 
     private String cookie;
+    
+    private String mailToken;
+    
+    private String mailAddr;
+    
+    private static Config instance;
+    
+    
+    static {
+      instance = loadConfig();
+    }
+    
+    public  static Config instance() {
+      return instance;
+    }
+    
+    /**
+     * 
+     * @return
+     * @create 2015年11月1日
+     */
+    private static Config loadConfig() {
+      File file = new File("config.json");
+      String fileContent;
+      try {
+        fileContent = FileUtils.readFileToString(file);
+        return JSON.parseObject(fileContent, Config.class);
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+
+    }
 
     /**
      * @return the interval
@@ -105,8 +141,22 @@ public class Config implements Serializable{
     public void setCookie(String cookie) {
         this.cookie = cookie;
     }
-    
-    
+
+    public String getMailToken() {
+      return mailToken;
+    }
+
+    public void setMailToken(String mailToken) {
+      this.mailToken = mailToken;
+    }
+
+    public String getMailAddr() {
+      return mailAddr;
+    }
+
+    public void setMailAddr(String mailAddr) {
+      this.mailAddr = mailAddr;
+    }
     
     
 }
