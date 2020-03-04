@@ -1,14 +1,20 @@
 package org.zt;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import javax.mail.Message;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 
 public class Mailer {
-  public static void send(String content,String url) {
+  public static void send(Map<String, Object> data, String url) {
     try {
       Properties props = new Properties();//key value:配置参数。真正发送邮件时再配置
       props.setProperty("mail.transport.protocol", "smtp");//指定邮件发送的协议，参数是规范规定的
@@ -22,9 +28,9 @@ public class Mailer {
       //设置邮件的头
       message.setFrom(new InternetAddress(Config.instance().getMailAddr()));
       message.setRecipients(Message.RecipientType.TO, Config.instance().getMailAddr());
-      message.setSubject("[雪球变更提醒]" +content);
+      message.setSubject("[雪球变更提醒]" + extractStockName(data));
       //设置正文
-      message.setContent("<a href='" + url + "'>" + content + "</a>", "text/html;charset=utf-8");
+      message.setContent("<a href='" + url + "'>" + url + "</a>", "text/html;charset=utf-8");
 
       message.saveChanges();
 
@@ -36,8 +42,26 @@ public class Mailer {
       e.printStackTrace();
     }
   }
-  
+
   public static void main(String[] args) {
-    send("大富科技", "https://xueqiu.com/P/ZH2099343");
+    String json =
+        "{\"电子\":{\"color\":\"#53b3e3\",\"name\":\"电子\",\"stocks\":[{\"proactive\":false,\"segment_color\":\"#53b3e3\",\"segment_id\":9899604,\"segment_name\":\"电子\",\"stock_id\":1001301,\"stock_name\":\"风华高科\",\"stock_symbol\":\"SZ000636\",\"textname\":\"undefined(SZ000636)\",\"url\":\"/S/SZ000636\",\"volume\":0.07830918,\"weight\":100}],\"weight\":100}}";
+    Map<String, Object> data = JSON.parseObject(json, Map.class);
+    send(data, "https://xueqiu.com/P/ZH2099343");
+  }
+
+  private static List<String> extractStockName(Map<String, Object> map) {
+    List<String> result = new ArrayList<String>();
+    for (Object obj : map.values()) {
+      JSONObject jsonObject = (JSONObject) obj;
+      JSONArray stocks = jsonObject.getJSONArray("stocks");
+      for (int i = 0; i < stocks.size(); i++) {
+        JSONObject stock = (JSONObject) stocks.get(i);
+        String stockName = stock.get("stock_name") + "(" + stock.get("weight") + "%)";
+        result.add(stockName);
+      }
+
+    }
+    return result;
   }
 }

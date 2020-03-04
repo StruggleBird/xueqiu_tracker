@@ -99,7 +99,7 @@ public class Monitor {
       Logger.log("休市中....");
       return;
     } ;
-    Logger.log("check url:" + url + " -" + new Date());
+    Logger.log("check url:" + url );
     String content = getContent(url);
     Map<String, Object> data = getData(content);
     if (data != null) {
@@ -149,7 +149,7 @@ public class Monitor {
   private static void notify(Map<String, Object> data, String url) {
     Logger.log("发现组合有变化,触发提醒功能，最新组合信息：" + JSON.toJSONString(data));
     try {
-      Mailer.send(data.get("stock_name") + "", url);
+      Mailer.send(data, url);
       trayIcon.displayMessage("组合变更提醒", url + "的组合有变动", MessageType.INFO);
       Desktop.getDesktop().browse(new URI(url));
     } catch (IOException e) {
