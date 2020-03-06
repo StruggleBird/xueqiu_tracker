@@ -32,6 +32,7 @@ import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -203,6 +204,7 @@ public class Monitor {
   private static String getContent(String url) {
     // 创建HttpClient实例
     CloseableHttpClient httpclient = HttpClients.createDefault();
+    
 
     try {
       // 创建Get方法实例
@@ -214,6 +216,8 @@ public class Monitor {
 
       headers[2] = new BasicHeader("Cookie", config.getCookie());
       httpgets.setHeaders(headers);
+      RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(1000).setSocketTimeout(3000).build();
+      httpgets.setConfig(requestConfig);
       HttpResponse response = httpclient.execute(httpgets);
       HttpEntity entity = response.getEntity();
 
@@ -226,7 +230,7 @@ public class Monitor {
         return content;
       }
     } catch (Exception e) {
-      e.printStackTrace();
+      Logger.log("请求异常：" + e.getMessage());
     } finally {
       try {
         httpclient.close();
