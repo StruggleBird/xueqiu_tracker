@@ -46,7 +46,7 @@ import com.alibaba.fastjson.JSON;
 public class Monitor {
 
   private static Map<String, Object> cache = new HashMap<String, Object>();
-  private static Config config;
+  private static Config config = Config.instance();
   private static Component comp = null;
   private static TrayIcon trayIcon;
 
@@ -54,7 +54,6 @@ public class Monitor {
       throws IllegalStateException, IOException, InterruptedException {
 
     initTray();
-    config = Config.instance();
 
     while (true) {
       for (int i = 0; i < config.getUrls().length; i++) {
@@ -125,19 +124,21 @@ public class Monitor {
     }
   }
 
-  private static boolean dataEquals(Map<String, Object> oriData, Map<String, Object> data) {
+  public static boolean dataEquals(Map<String, Object> oriData, Map<String, Object> data) {
     if (oriData.size() != data.size()) {
       return false;
     }
-    for (String key : oriData.keySet()) {
-      Map<String, Object> map = (Map<String, Object>) oriData.get(key);
-      float weight = Float.parseFloat(map.get("weight").toString());
-      if (!data.containsKey(key)) {
+    
+    Map<String, Float> oriMap = StockUtils.extractStockInfo(oriData);
+    Map<String, Float> newMap = StockUtils.extractStockInfo(data);
+    
+    for (String key : oriMap.keySet()) {
+      float weight = oriMap.get(key);
+      if (!newMap.containsKey(key)) {
         return false;
       }
 
-      Map<String, Object> mapNew = (Map<String, Object>) data.get(key);
-      float weightNew = Float.parseFloat(mapNew.get("weight").toString());
+      Float weightNew = newMap.get(key);
       if (Math.abs(weight - weightNew) > config.getFloatVal()) {
         return false;
       }
@@ -171,7 +172,7 @@ public class Monitor {
   private static boolean isOpen() {
     Date now = new Date();
     if (now.getHours() < 9 || now.getHours() >= 15) {
-      return false;
+      return true;
     }
 
     return true;

@@ -10,8 +10,6 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 
 public class Mailer {
   public static void send(Map<String, Object> data, String url) {
@@ -51,17 +49,16 @@ public class Mailer {
   }
 
   private static List<String> extractStockName(Map<String, Object> map) {
-    List<String> result = new ArrayList<String>();
-    for (Object obj : map.values()) {
-      JSONObject jsonObject = (JSONObject) obj;
-      JSONArray stocks = jsonObject.getJSONArray("stocks");
-      for (int i = 0; i < stocks.size(); i++) {
-        JSONObject stock = (JSONObject) stocks.get(i);
-        String stockName = stock.get("stock_name") + "(" + stock.get("weight") + "%)";
-        result.add(stockName);
-      }
-
-    }
+    List<String> result = new ArrayList<>();
+    Map<String, Float> stockInfo = StockUtils.extractStockInfo(map);
+    
+    stockInfo.forEach((key,weight)->{
+      String stockName = key + "(" + weight + "%)";
+      result.add(stockName);
+    });
+    
     return result;
   }
+
+
 }
