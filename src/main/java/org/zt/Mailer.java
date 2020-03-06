@@ -9,7 +9,6 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import com.alibaba.fastjson.JSON;
 
 public class Mailer {
   public static void send(Map<String, Object> data, String url) {
@@ -41,12 +40,6 @@ public class Mailer {
     }
   }
 
-  public static void main(String[] args) {
-    String json =
-        "{\"电子\":{\"color\":\"#53b3e3\",\"name\":\"电子\",\"stocks\":[{\"proactive\":false,\"segment_color\":\"#53b3e3\",\"segment_id\":9899604,\"segment_name\":\"电子\",\"stock_id\":1001301,\"stock_name\":\"风华高科\",\"stock_symbol\":\"SZ000636\",\"textname\":\"undefined(SZ000636)\",\"url\":\"/S/SZ000636\",\"volume\":0.07830918,\"weight\":100}],\"weight\":100}}";
-    Map<String, Object> data = JSON.parseObject(json, Map.class);
-    send(data, "https://xueqiu.com/P/ZH2099343");
-  }
 
   private static List<String> extractStockName(Map<String, Object> map) {
     List<String> result = new ArrayList<>();
