@@ -172,7 +172,7 @@ public class Monitor {
   private static boolean isOpen() {
     Date now = new Date();
     if (now.getHours() < 9 || now.getHours() >= 15) {
-      return true;
+      return false;
     }
 
     return true;
