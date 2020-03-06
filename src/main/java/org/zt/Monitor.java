@@ -56,11 +56,14 @@ public class Monitor {
     initTray();
     config = Config.instance();
 
-    for (int i = 0;; i++) {
-      String url = config.getUrls()[i % config.getUrls().length];
-      checkData(url);
+    while (true) {
+      for (int i = 0; i < config.getUrls().length; i++) {
+        String url = config.getUrls()[i];
+        checkData(url);
+      }
       Thread.sleep(TimeUnit.SECONDS.toMillis(config.getInterval()));
     }
+
   }
 
   /**
@@ -89,7 +92,7 @@ public class Monitor {
     }
   }
 
-  
+
 
   /**
    * @param url
@@ -100,7 +103,7 @@ public class Monitor {
       Logger.log("休市中....");
       return;
     } ;
-    Logger.log("check url:" + url );
+    Logger.log("check url:" + url);
     String content = getContent(url);
     Map<String, Object> data = getData(content);
     if (data != null) {
@@ -204,7 +207,7 @@ public class Monitor {
   private static String getContent(String url) {
     // 创建HttpClient实例
     CloseableHttpClient httpclient = HttpClients.createDefault();
-    
+
 
     try {
       // 创建Get方法实例
@@ -216,7 +219,8 @@ public class Monitor {
 
       headers[2] = new BasicHeader("Cookie", config.getCookie());
       httpgets.setHeaders(headers);
-      RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(1000).setSocketTimeout(3000).build();
+      RequestConfig requestConfig =
+          RequestConfig.custom().setConnectTimeout(1000).setSocketTimeout(3000).build();
       httpgets.setConfig(requestConfig);
       HttpResponse response = httpclient.execute(httpgets);
       HttpEntity entity = response.getEntity();
