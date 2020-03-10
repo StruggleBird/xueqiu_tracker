@@ -106,9 +106,7 @@ public class Monitor {
     String content = getContent(url);
     Map<String, Object> data = getData(content);
     if (data != null) {
-      for (String key : data.keySet()) {
-        Logger.log(key + ":" + data.get(key));
-      }
+      Logger.log("组合信息：" + StockUtils.extractStockInfo(data));
       Logger.log("--------------------------------------------------------------------------");
 
       // 如果已经有缓存，对比和缓存中的是否一致，不一致发出提醒
