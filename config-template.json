@@ -3,11 +3,11 @@
 	"preview":0,
 	"testMode":0,
     "floatVal":2.0,
-    "mailToken":"--",
-    "mailAddr":"--",
+    "mailToken":"填写邮箱账号密码/Token",
+    "mailAddr":"发件人地址（也是收件人的地址）",
     "urls": [
          "https://xueqiu.com/P/ZH2099343"
          
     ],
-    "cookie":"--"
+    "cookie":"将登陆后的浏览器Cookie文本复制到这里"
 }

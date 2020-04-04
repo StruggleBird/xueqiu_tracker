@@ -17,6 +17,10 @@ public class Mailer {
       props.setProperty("mail.transport.protocol", "smtp");//指定邮件发送的协议，参数是规范规定的
       props.setProperty("mail.host", "smtp.qq.com");//指定发件服务器的地址，参数是规范规定的
       props.setProperty("mail.smtp.auth", "true");//请求服务器进行身份认证。参数与具体的JavaMail实现有关
+      props.put("mail.smtp.timeout", 5000);
+      props.put("mail.smtp.connectiontimeout", 5000);
+      props.put("mail.smtp.writetimeout", 5000);
+
 
       Session session = Session.getInstance(props);//发送邮件时使用的环境配置
       session.setDebug(false);
