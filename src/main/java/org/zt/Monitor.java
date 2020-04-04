@@ -155,11 +155,9 @@ public class Monitor {
       Mailer.send(data, url);
       trayIcon.displayMessage("组合变更提醒", url + "的组合有变动", MessageType.INFO);
       Desktop.getDesktop().browse(new URI(url));
-    } catch (IOException e) {
+    } catch (Exception e) {
       e.printStackTrace();
-    } catch (URISyntaxException e) {
-      e.printStackTrace();
-    }
+    } 
   }
 
   /**
