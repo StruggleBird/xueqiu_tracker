@@ -12,7 +12,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 public class Mailer {
-	public static void send(Map<String, Object> data, String url) {
+	public static void send(Map<String, Object> oriData, Map<String, Object> data, String url) {
 		try {
 			Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
 			final String SSL_FACTORY = "javax.net.ssl.SSLSocketFactory";
@@ -36,7 +36,10 @@ public class Mailer {
 			message.setRecipients(Message.RecipientType.TO, Config.instance().getMailAddr());
 			message.setSubject("[雪球变更提醒]" + extractStockName(data));
 			// 设置正文
-			message.setContent("<a href='" + url + "'>" + url + "</a>", "text/html;charset=utf-8");
+			String content = "<a href='" + url + "'>" + url + "</a><br>";
+			content += "原有持仓：" + extractStockName(oriData) + "<br>"; 
+			content += "最新持仓：" + extractStockName(data) + "<br>"; 
+			message.setContent(content, "text/html;charset=utf-8");
 
 			message.saveChanges();
 

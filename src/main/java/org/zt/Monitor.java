@@ -20,13 +20,13 @@ import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -37,6 +37,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicHeader;
+
 import com.alibaba.fastjson.JSON;
 
 /**
@@ -114,7 +115,7 @@ public class Monitor {
       if (cache.containsKey(url)) {
         Map<String, Object> oriData = (Map<String, Object>) cache.get(url);
         if (!dataEquals(oriData, data)) {
-          notify(data, url);
+          notify(oriData,data, url);
         }
       }
 
@@ -146,13 +147,14 @@ public class Monitor {
 
   /**
    * @param data
+ * @param data 
    * @param url
    * @create 2015年11月1日
    */
-  private static void notify(Map<String, Object> data, String url) {
+  private static void notify(Map<String, Object> oriData, Map<String, Object> data, String url) {
     Logger.log("发现组合有变化,触发提醒功能，最新组合信息：" + JSON.toJSONString(data));
     try {
-      Mailer.send(data, url);
+      Mailer.send(oriData,data, url);
       trayIcon.displayMessage("组合变更提醒", url + "的组合有变动", MessageType.INFO);
       Desktop.getDesktop().browse(new URI(url));
     } catch (Exception e) {
