@@ -37,6 +37,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicHeader;
+import org.junit.platform.commons.util.StringUtils;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -106,6 +107,7 @@ public class Monitor {
     } ;
     Logger.log("check url:" + url);
     String content = getContent(url);
+    Logger.debug("响应是否有内容："+(content!=null&& content.length()!=0));
     Map<String, Object> data = getData(content);
     if (data != null) {
       Map<String, Object> dataInfoMap = (Map<String, Object>) data.get("data");
@@ -242,7 +244,7 @@ public class Monitor {
       httpgets.setConfig(requestConfig);
       HttpResponse response = httpclient.execute(httpgets);
       HttpEntity entity = response.getEntity();
-
+      Logger.debug("响应码："+response.getStatusLine().getStatusCode());
       if (entity != null) {
         InputStream instreams = entity.getContent();
 

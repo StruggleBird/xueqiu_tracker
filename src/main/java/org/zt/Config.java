@@ -38,6 +38,8 @@ public class Config implements Serializable{
     
     private static Config instance;
     
+    private int logLevel = 3;  // error:4,info:3,debug:2,trace:1
+    
     
     static {
       instance = loadConfig();
@@ -157,6 +159,14 @@ public class Config implements Serializable{
     public void setMailAddr(String mailAddr) {
       this.mailAddr = mailAddr;
     }
+
+	public int getLogLevel() {
+		return logLevel;
+	}
+
+	public void setLogLevel(int logLevel) {
+		this.logLevel = logLevel;
+	}
     
     
 }
