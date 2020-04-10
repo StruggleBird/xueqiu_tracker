@@ -34,7 +34,7 @@ public class Mailer {
 			// 设置邮件的头
 			message.setFrom(new InternetAddress(Config.instance().getMailAddr()));
 			message.setRecipients(Message.RecipientType.TO, Config.instance().getMailAddr());
-			message.setSubject("[雪球变更提醒]" + extractStockName(data));
+			message.setSubject("[雪球-"+extractCubeName(data)+"]" + extractStockName(data));
 			// 设置正文
 			String content = "<a href='" + url + "'>" + url + "</a><br>";
 			content += "原有持仓：" + extractStockName(oriData) + "<br>"; 
@@ -52,7 +52,14 @@ public class Mailer {
 		}
 	}
 
+	private static String extractCubeName(Map<String, Object> data) {
+		return data.get("name").toString();
+	}
+
 	private static List<String> extractStockName(Map<String, Object> map) {
+		if (map.containsKey("name")) {
+			map = (Map<String, Object>) map.get("data");
+		}
 		List<String> result = new ArrayList<>();
 		Map<String, Float> stockInfo = StockUtils.extractStockInfo(map);
 

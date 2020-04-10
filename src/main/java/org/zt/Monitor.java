@@ -39,6 +39,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicHeader;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 
 /**
  * @author Ternence
@@ -107,19 +108,20 @@ public class Monitor {
     String content = getContent(url);
     Map<String, Object> data = getData(content);
     if (data != null) {
-      Logger.log("组合信息：" + StockUtils.extractStockInfo(data));
+      Map<String, Object> dataInfoMap = (Map<String, Object>) data.get("data");
+      Logger.log("组合信息：" + StockUtils.extractStockInfo(dataInfoMap));
       Logger.log("--------------------------------------------------------------------------");
 
       // 如果已经有缓存，对比和缓存中的是否一致，不一致发出提醒
 
       if (cache.containsKey(url)) {
         Map<String, Object> oriData = (Map<String, Object>) cache.get(url);
-        if (!dataEquals(oriData, data)) {
+        if (!dataEquals(oriData, dataInfoMap)) {
           notify(oriData,data, url);
         }
       }
 
-      cache.put(url, data);
+      cache.put(url, dataInfoMap);
     }
   }
 
@@ -185,16 +187,33 @@ public class Monitor {
     if (content == null) {
       return null;
     }
+    
+    Map<String, Object> map = new HashMap<>();
+    
+    
+    //查找组合内容
     Pattern treePattern = Pattern.compile("SNB.cubeTreeData = (.+?);");
     Matcher matcher = treePattern.matcher(content);
     if (matcher.find()) {
       String stockTree = matcher.group(1);
       // Logger.log(stockTree);
-      Map<String, Object> map = JSON.parseObject(stockTree, Map.class);
-      return map;
+      Map<String, Object> stockData = JSON.parseObject(stockTree, Map.class);
+      map.put("data", stockData);
+    }else {
+    	return null;
+    }
+    
+    //查找组合标题
+    treePattern = Pattern.compile("SNB.cubeInfo = (.+?);");
+    matcher = treePattern.matcher(content);
+    if (matcher.find()) {
+      String stockInfo = matcher.group(1);
+      // Logger.log(stockTree);
+      JSONObject jsonObject = JSON.parseObject(stockInfo);
+      map.put("name", jsonObject.getString("name"));
     }
 
-    return null;
+    return map;
   }
 
   /**
