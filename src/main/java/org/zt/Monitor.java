@@ -277,7 +277,7 @@ public class Monitor {
   private static class TrayIconMouseListener extends MouseAdapter {
     public void mousePressed(MouseEvent me) {
       if (me.getButton() == MouseEvent.BUTTON1) {
-        comp.setVisible(true);
+//        comp.setVisible(true);
       }
     }
   }
