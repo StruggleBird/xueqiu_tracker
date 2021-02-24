@@ -1,8 +1,8 @@
 package org.zt;
 
 import java.util.Map;
-import org.junit.jupiter.api.Test;
 import com.alibaba.fastjson.JSON;
+import org.junit.Test;
 
 class MailerTest {
 
